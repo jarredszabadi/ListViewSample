@@ -37,14 +37,12 @@ export default class FlatListBasics extends Component {
 // })
 
 constructor(props) {
-
   super(props);
-
   this.state = {
-
     isLoading: true
-
   }
+
+  this.getIem = this.getItem.bind(this);
 
   YellowBox.ignoreWarnings([
    'Warning: componentWillMount is deprecated',
@@ -53,10 +51,8 @@ constructor(props) {
 
 }
 
-GetItem (flower_name) {
-
-Alert.alert(flower_name);
-
+getItem (flower_name) {
+    Alert.alert(flower_name);
 }
 
 FlatListItemSeparator = () => {
@@ -90,52 +86,35 @@ webCall=()=>{
 }
 
 componentDidMount(){
-
  this.webCall();
+}
 
+renderRow = ({item}) => {
+  return (
+    <View style={{flex:1, flexDirection: 'row'}}>
+      <Image source = {{ uri: item.flower_image_url }} style={styles.imageView} />
+      <Text onPress={()=>this.getItem(item.flower_name)} style={styles.textView} >{item.flower_name}</Text>
+    </View>
+  )
 }
 
 render() {
-
   if (this.state.isLoading) {
     return (
-
-     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator size="large" />
-
       </View>
-
     );
-
   }
 
   return (
-
     <View style={styles.MainContainer}>
-
       <FlatList
-
        data={ this.state.dataSource }
-
        ItemSeparatorComponent = {this.FlatListItemSeparator}
-
-       renderItem={({item}) =>
-
-           <View style={{flex:1, flexDirection: 'row'}}>
-
-             <Image source = {{ uri: item.flower_image_url }} style={styles.imageView} />
-
-             <Text onPress={this.GetItem.bind(this, item.flower_name)} style={styles.textView} >{item.flower_name}</Text>
-
-           </View>
-
-         }
-
+       renderItem={this.renderRow}
        keyExtractor={(item, index) => index.toString()}
-
        />
-
     </View>
   );
 }
