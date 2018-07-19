@@ -44,7 +44,8 @@ constructor(props) {
   super(props);
   this.state = {
     isLoading: true,
-    page: 1
+    page: 1,
+    dataSource: [],
   }
 
   this.getIem = this.getItem.bind(this);
@@ -75,6 +76,7 @@ FlatListItemSeparator = () => {
 remoteFetchData=()=>{
  this.setState({isLoading: true})
  const page = this.state.page
+ console.log(page);
  return fetch(`http://food2fork.com/api/search?key=c8f48c08f338354d7d921317af9391c1&page=${page}`)
         .then((response) => response.json())
         .then((responseJson) => {
@@ -116,8 +118,10 @@ renderRow = ({item}) => {
 }
 
 shouldShowLoader() {
-  return (this.state.isLoading && !this.state.dataSource == undefined);
+  return (this.state.isLoading && !this.state.dataSource.length > 0);
 }
+
+
 
 render() {
   if (this.shouldShowLoader()) {
@@ -131,14 +135,15 @@ render() {
   return (
     <View style={styles.MainContainer}>
       <FlatList
-       ref={elm => this.flatList = elm}
-       data={ this.state.dataSource }
-       ItemSeparatorComponent = {this.FlatListItemSeparator}
        renderItem={this.renderRow}
-       keyExtractor={(item, index) => index.toString()}
-       onRefresh = {() => this.remoteFetchData()}
-       refreshing = {this.state.isLoading}
-       onEndReached = {() => this.handleLoadMore()}
+       data={ this.state.dataSource }
+       // ref={elm => this.flatList = elm}
+       // ItemSeparatorComponent = {this.FlatListItemSeparator}
+       // ListHeaderComponent = { <Header/> }
+       // keyExtractor={(item, index) => index.toString()}
+       // onRefresh = {() => this.remoteFetchData()}
+       // refreshing = {this.state.isLoading}
+       // onEndReached = {() => this.handleLoadMore()}
        />
     </View>
   );
