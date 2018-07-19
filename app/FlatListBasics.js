@@ -78,19 +78,19 @@ remoteFetchData=()=>{
  return fetch(`http://food2fork.com/api/search?key=c8f48c08f338354d7d921317af9391c1&page=${page}`)
         .then((response) => response.json())
         .then((responseJson) => {
-          console.log("ayy")
           this.setState({
             isLoading: false,
             dataSource: page === 1 ? responseJson.recipes  : [...this.state.dataSource, ...responseJson.recipes ],
-
           }, function() {
             // In this block you can do something with new state.
           });
+          // if (this.state.page !== 1) {
+          //   setTimeout(() => this.flatList.scrollToEnd(true), 200)
+          // }
         })
         .catch((error) => {
           console.error(error);
         });
-
 }
 
 handleLoadMore = () => {
@@ -131,6 +131,7 @@ render() {
   return (
     <View style={styles.MainContainer}>
       <FlatList
+       ref={elm => this.flatList = elm}
        data={ this.state.dataSource }
        ItemSeparatorComponent = {this.FlatListItemSeparator}
        renderItem={this.renderRow}
