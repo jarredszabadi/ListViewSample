@@ -1,146 +1,165 @@
 import React, { Component } from 'react';
 import {sampleDataList} from './SampleData';
-import { AppRegistry, StyleSheet, Platform, View, ActivityIndicator, FlatList, Text, Image, Alert, YellowBox } from 'react-native';
+import Header from './Header'
+import {
+  AppRegistry,
+  StyleSheet,
+  Platform,
+  View,
+  ActivityIndicator,
+  FlatList,
+  Text,
+  Image,
+  Alert,
+  YellowBox,
+  StatusBar, } from 'react-native';
 import Expo from 'expo';
 
 export default class FlatListBasics extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <FlatList
-          data={sampleDataList}
-          renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
-        />
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-})
-
-// constructor(props) {
-//   super(props);
-//   this.state = {
-//     isLoading: true
-//   }
-//
-//   this.getIem = this.getItem.bind(this);
-//
-//   YellowBox.ignoreWarnings([
-//    'Warning: componentWillMount is deprecated',
-//    'Warning: componentWillReceiveProps is deprecated',
-//  ]);
-//
-// }
-//
-// getItem (flower_name) {
-//     Alert.alert(flower_name);
-// }
-//
-// FlatListItemSeparator = () => {
-//   return (
-//     <View
-//       style={{
-//         height: .5,
-//         width: "100%",
-//         backgroundColor: "#000",
-//       }}
-//     />
-//   );
-// }
-//
-// webCall=()=>{
-//
-//  return fetch('https://reactnativecode.000webhostapp.com/FlowersList.php')
-//         .then((response) => response.json())
-//         .then((responseJson) => {
-//           this.setState({
-//             isLoading: false,
-//             dataSource: responseJson
-//           }, function() {
-//             // In this block you can do something with new state.
-//           });
-//         })
-//         .catch((error) => {
-//           console.error(error);
-//         });
-//
-// }
-//
-// componentDidMount(){
-//  this.webCall();
-// }
-//
-// renderRow = ({item}) => {
-//   return (
-//     <View style={{flex:1, flexDirection: 'row'}}>
-//       <Image source = {{ uri: item.flower_image_url }} style={styles.imageView} />
-//       <Text onPress={()=>this.getItem(item.flower_name)} style={styles.textView} >{item.flower_name}</Text>
-//     </View>
-//   )
-// }
-//
-// render() {
-//   if (this.state.isLoading) {
+//   render() {
 //     return (
-//       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-//         <ActivityIndicator size="large" />
+//       <View style={styles.container}>
+//         <FlatList
+//           data={sampleDataList}
+//           renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+//         />
 //       </View>
 //     );
 //   }
-//
-//   return (
-//     <View style={styles.MainContainer}>
-//       <FlatList
-//        data={ this.state.dataSource }
-//        ItemSeparatorComponent = {this.FlatListItemSeparator}
-//        renderItem={this.renderRow}
-//        keyExtractor={(item, index) => index.toString()}
-//        />
-//     </View>
-//   );
-// }
 // }
 //
 // const styles = StyleSheet.create({
-//
-// MainContainer :{
-//
-//    justifyContent: 'center',
-//    flex:1,
-//    margin: 5,
-//    marginTop: (Platform.OS === 'ios') ? 20 : 0,
-//
-// },
-//
-// imageView: {
-//
-//    width: '50%',
-//    height: 100 ,
-//    margin: 7,
-//    borderRadius : 7
-//
-// },
-//
-// textView: {
-//
-//    width:'50%',
-//    textAlignVertical:'center',
-//    padding:10,
-//    color: '#000'
-//
-// }
-//
-// });
+//   container: {
+//    flex: 1,
+//    paddingTop: 22
+//   },
+//   item: {
+//     padding: 10,
+//     fontSize: 18,
+//     height: 44,
+//   },
+// })
+
+constructor(props) {
+  super(props);
+  this.state = {
+    isLoading: true
+  }
+
+  this.getIem = this.getItem.bind(this);
+
+  YellowBox.ignoreWarnings([
+   'Warning: componentWillMount is deprecated',
+   'Warning: componentWillReceiveProps is deprecated',
+ ]);
+
+}
+
+getItem (flower_name) {
+    Alert.alert(flower_name);
+}
+
+FlatListItemSeparator = () => {
+  return (
+    <View
+      style={{
+        height: .5,
+        width: "100%",
+        backgroundColor: "#000",
+      }}
+    />
+  );
+}
+
+remoteFetchData=()=>{
+ this.setState({isLoading: true})
+ return fetch('http://food2fork.com/api/search?key=c8f48c08f338354d7d921317af9391c1')
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log("ayy")
+          this.setState({
+            isLoading: false,
+            dataSource: responseJson.recipes
+          }, function() {
+            // In this block you can do something with new state.
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+}
+
+componentDidMount(){
+ this.remoteFetchData();
+}
+
+renderRow = ({item}) => {
+  return (
+    <View style={{flex:1, flexDirection: 'row'}}>
+      <Image source = {{ uri: item.image_url }} style={styles.imageView} />
+      <Text onPress={()=>this.getItem(item.title)} style={styles.textView} >{item.title}</Text>
+    </View>
+  )
+}
+
+shouldShowLoader() {
+  return (this.state.isLoading && !this.state.dataSource == undefined);
+}
+
+render() {
+  if (this.shouldShowLoader()) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.MainContainer}>
+      <FlatList
+       data={ this.state.dataSource }
+       ItemSeparatorComponent = {this.FlatListItemSeparator}
+       renderItem={this.renderRow}
+       keyExtractor={(item, index) => index.toString()}
+       onRefresh = {() => this.remoteFetchData()}
+       refreshing = {this.state.isLoading}
+       />
+    </View>
+  );
+}
+}
+
+const styles = StyleSheet.create({
+
+MainContainer :{
+
+   justifyContent: 'center',
+   flex:1,
+   margin: 5,
+   marginTop: (Platform.OS === 'ios') ? 20 : StatusBar.currentHeight,
+
+},
+
+imageView: {
+
+   width: '50%',
+   height: 100 ,
+   margin: 7,
+   borderRadius : 7
+
+},
+
+textView: {
+
+   width:'50%',
+   textAlignVertical:'center',
+   padding:10,
+   color: '#000'
+
+}
+
+});
 
 Expo.registerRootComponent(FlatListBasics);
