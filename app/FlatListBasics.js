@@ -43,7 +43,8 @@ export default class FlatListBasics extends Component {
 constructor(props) {
   super(props);
   this.state = {
-    isLoading: true
+    isLoading: true,
+    page: 1
   }
 
   this.getIem = this.getItem.bind(this);
@@ -73,13 +74,15 @@ FlatListItemSeparator = () => {
 
 remoteFetchData=()=>{
  this.setState({isLoading: true})
- return fetch('http://food2fork.com/api/search?key=c8f48c08f338354d7d921317af9391c1')
+ const page = this.state.page
+ return fetch(`http://food2fork.com/api/search?key=c8f48c08f338354d7d921317af9391c1&page=${page}`)
         .then((response) => response.json())
         .then((responseJson) => {
           console.log("ayy")
           this.setState({
             isLoading: false,
-            dataSource: responseJson.recipes
+            dataSource: page === 1 ? responseJson.recipes  : [...this.state.dataSource, ...responseJson.recipes ],
+
           }, function() {
             // In this block you can do something with new state.
           });
@@ -88,6 +91,15 @@ remoteFetchData=()=>{
           console.error(error);
         });
 
+}
+
+handleLoadMore = () => {
+  this.setState({page: this.state.page + 1});
+  this.remoteFetchData()
+}
+
+handlePullToRefresh = () => {
+  this.remoteFetchData()
 }
 
 componentDidMount(){
@@ -125,6 +137,7 @@ render() {
        keyExtractor={(item, index) => index.toString()}
        onRefresh = {() => this.remoteFetchData()}
        refreshing = {this.state.isLoading}
+       onEndReached = {() => this.handleLoadMore()}
        />
     </View>
   );
